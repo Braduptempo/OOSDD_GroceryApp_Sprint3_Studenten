@@ -44,6 +44,11 @@ namespace Grocery.App
             builder.Services.AddTransient<ProductView>().AddTransient<ProductViewModel>();
             builder.Services.AddTransient<ChangeColorView>().AddTransient<ChangeColorViewModel>();
             builder.Services.AddTransient<LoginView>().AddTransient<LoginViewModel>();
+            builder.Services.AddTransient<RegisterView>().AddTransient<RegisterViewModel>();
+            builder.Services.AddSingleton<IClientRepository, ClientRepository>();
+            builder.Services.AddTransient<RegisterView>();
+            builder.Services.AddTransient<RegisterViewModel>();
+
             return builder.Build();
         }
     }
