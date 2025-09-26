@@ -15,4 +15,6 @@
             <ShellContent Title="Producten" ContentTemplate="{DataTemplate local:ProductView}" />
         </Tab>
     </TabBar>
+    
+    <ShellContent Route="register" ContentTemplate="{DataTemplate local:RegisterView}" />
 </Shell>
