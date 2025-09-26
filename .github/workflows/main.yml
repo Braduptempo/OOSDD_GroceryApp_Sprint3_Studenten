@@ -10,6 +10,40 @@ on:
       - main
 
 jobs:
+  # Windows build en tests
+  windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v3
+        with:
+          path: C:\Users\runneradmin\.nuget\packages
+          key: nuget-windows-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            nuget-windows-
+
+      - name: Install MAUI Windows workload
+        run: |
+          dotnet workload install maui-windows
+          dotnet workload restore
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build Windows project
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run unit tests
+        run: dotnet test --configuration Release --no-restore --no-build --verbosity normal
+
   # Android build en tests (Linux runner)
   android:
     runs-on: ubuntu-latest
@@ -39,11 +73,11 @@ jobs:
         run: dotnet restore
 
       - name: Build Android project
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build -f net8.0-android --configuration Release --no-restore
 
       - name: Run unit tests
-        run: dotnet test --configuration Release --no-restore --no-build --verbosity normal
-
+        run: dotnet test -f net8.0-android --configuration Release --no-restore --no-build --verbosity normal
+  
   # iOS build en tests (macOS runner)
   ios:
     runs-on: macos-latest
