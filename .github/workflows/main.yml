@@ -8,7 +8,6 @@ on:
   pull_request:
     branches:
       - main
-      - develop
 
 jobs:
   # Windows build en tests
@@ -37,13 +36,13 @@ jobs:
           dotnet workload restore
 
       - name: Restore dependencies
-        run: dotnet restore -f net8.0-windows /p:RuntimeIdentifier=win-x64
+        run: dotnet restore OOSDD_GroceryApp_Sprint3_Studenten.sln -f net8.0-windows /p:RuntimeIdentifier=win-x64
 
-      - name: Build Windows project
-        run: dotnet build -f net8.0-windows --configuration Release --no-restore /p:RuntimeIdentifier=win-x64
+      - name: Build Windows solution
+        run: dotnet build OOSDD_GroceryApp_Sprint3_Studenten.sln -f net8.0-windows --configuration Release --no-restore /p:RuntimeIdentifier=win-x64
 
       - name: Run unit tests
-        run: dotnet test -f net8.0-windows --configuration Release --no-restore --no-build /p:RuntimeIdentifier=win-x64
+        run: dotnet test OOSDD_GroceryApp_Sprint3_Studenten.sln -f net8.0-windows --configuration Release --no-restore --no-build /p:RuntimeIdentifier=win-x64
 
   # Android build en tests
   android:
@@ -71,13 +70,13 @@ jobs:
           dotnet workload restore
 
       - name: Restore dependencies
-        run: dotnet restore -f net8.0-android
+        run: dotnet restore OOSDD_GroceryApp_Sprint3_Studenten.sln -f net8.0-android
 
-      - name: Build Android project
-        run: dotnet build -f net8.0-android --configuration Release --no-restore
+      - name: Build Android solution
+        run: dotnet build OOSDD_GroceryApp_Sprint3_Studenten.sln -f net8.0-android --configuration Release --no-restore
 
       - name: Run unit tests
-        run: dotnet test -f net8.0-android --configuration Release --no-restore --no-build
+        run: dotnet test OOSDD_GroceryApp_Sprint3_Studenten.sln -f net8.0-android --configuration Release --no-restore --no-build
 
   # iOS build en tests
   ios:
@@ -105,13 +104,13 @@ jobs:
           dotnet workload restore
 
       - name: Restore dependencies
-        run: dotnet restore -f net8.0-ios
+        run: dotnet restore OOSDD_GroceryApp_Sprint3_Studenten.sln -f net8.0-ios
 
-      - name: Build iOS project
-        run: dotnet build -f net8.0-ios --configuration Release --no-restore
+      - name: Build iOS solution
+        run: dotnet build OOSDD_GroceryApp_Sprint3_Studenten.sln -f net8.0-ios --configuration Release --no-restore
 
       - name: Run unit tests
-        run: dotnet test -f net8.0-ios --configuration Release --no-restore --no-build
+        run: dotnet test OOSDD_GroceryApp_Sprint3_Studenten.sln -f net8.0-ios --configuration Release --no-restore --no-build
 
   # Mac Catalyst build en tests
   maccatalyst:
@@ -140,10 +139,10 @@ jobs:
           dotnet workload restore
 
       - name: Restore dependencies
-        run: dotnet restore -f net8.0-maccatalyst /p:RuntimeIdentifier=maccatalyst-x64
+        run: dotnet restore OOSDD_GroceryApp_Sprint3_Studenten.sln -f net8.0-maccatalyst /p:RuntimeIdentifier=maccatalyst-x64
 
-      - name: Build Mac Catalyst project
-        run: dotnet build -f net8.0-maccatalyst --configuration Release --no-restore /p:RuntimeIdentifier=maccatalyst-x64
+      - name: Build Mac Catalyst solution
+        run: dotnet build OOSDD_GroceryApp_Sprint3_Studenten.sln -f net8.0-maccatalyst --configuration Release --no-restore /p:RuntimeIdentifier=maccatalyst-x64
 
       - name: Run unit tests
-        run: dotnet test -f net8.0-maccatalyst --configuration Release --no-restore --no-build /p:RuntimeIdentifier=maccatalyst-x64
+        run: dotnet test OOSDD_GroceryApp_Sprint3_Studenten.sln -f net8.0-maccatalyst --configuration Release --no-restore --no-build /p:RuntimeIdentifier=maccatalyst-x64
