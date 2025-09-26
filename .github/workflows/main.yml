@@ -1,5 +1,5 @@
-name: MAUI CI/CD
-
+name: MAUI Unit Tests
+ 
 on:
   push:
     branches:
@@ -8,165 +8,27 @@ on:
   pull_request:
     branches:
       - main
-
+ 
 jobs:
-  # Windows build en tests
-  windows:
-    runs-on: windows-latest
+  test:
+    runs-on: ubuntu-latest  # Of windows-latest/macOS-latest als specifiek platform nodig is
     steps:
-      - name: Checkout repository
+      - name: Haal de repository op
         uses: actions/checkout@v4
-
-      - name: Setup .NET SDK
+ 
+      - name: Installeer .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0.x'
-
-      - name: Cache NuGet packages
-        uses: actions/cache@v3
-        with:
-          path: C:\Users\runneradmin\.nuget\packages
-          key: nuget-windows-${{ hashFiles('**/*.csproj') }}
-          restore-keys: |
-            nuget-windows-
-
-      - name: Install MAUI Windows workload
-        run: |
-          dotnet workload install maui-windows
-          dotnet workload restore
-
-      - name: Restore solution
-        run: dotnet restore OOSDD_GroceryApp_Sprint3_Studenten.sln
-
-      - name: Build Windows projects
-        run: |
-          dotnet build ./Grocery.App/Grocery.App.csproj -f net8.0-windows --configuration Release --no-restore /p:RuntimeIdentifier=win-x64
-          dotnet build ./Grocery.Core/Grocery.Core.csproj -f net8.0-windows --configuration Release --no-restore /p:RuntimeIdentifier=win-x64
-          dotnet build ./Grocery.Core.Data/Grocery.Core.Data.csproj -f net8.0-windows --configuration Release --no-restore /p:RuntimeIdentifier=win-x64
-
-      - name: Run Windows unit tests
-        run: |
-          dotnet test ./Grocery.App/Grocery.App.csproj -f net8.0-windows --configuration Release --no-restore --no-build /p:RuntimeIdentifier=win-x64
-          dotnet test ./Grocery.Core/Grocery.Core.csproj -f net8.0-windows --configuration Release --no-restore --no-build /p:RuntimeIdentifier=win-x64
-          dotnet test ./Grocery.Core.Data/Grocery.Core.Data.csproj -f net8.0-windows --configuration Release --no-restore --no-build /p:RuntimeIdentifier=win-x64
-
-  # Android build en tests
-  android:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '8.0.x'
-
-      - name: Cache NuGet packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.nuget/packages
-          key: nuget-android-${{ hashFiles('**/*.csproj') }}
-          restore-keys: |
-            nuget-android-
-
-      - name: Install MAUI Android workload
-        run: |
-          dotnet workload install maui-android
-          dotnet workload restore
-
-      - name: Restore solution
-        run: dotnet restore OOSDD_GroceryApp_Sprint3_Studenten.sln
-
-      - name: Build Android projects
-        run: |
-          dotnet build ./Grocery.App/Grocery.App.csproj -f net8.0-android --configuration Release --no-restore
-          dotnet build ./Grocery.Core/Grocery.Core.csproj -f net8.0-android --configuration Release --no-restore
-          dotnet build ./Grocery.Core.Data/Grocery.Core.Data.csproj -f net8.0-android --configuration Release --no-restore
-
-      - name: Run Android unit tests
-        run: |
-          dotnet test ./Grocery.App/Grocery.App.csproj -f net8.0-android --configuration Release --no-restore --no-build
-          dotnet test ./Grocery.Core/Grocery.Core.csproj -f net8.0-android --configuration Release --no-restore --no-build
-          dotnet test ./Grocery.Core.Data/Grocery.Core.Data.csproj -f net8.0-android --configuration Release --no-restore --no-build
-
-  # iOS build en tests
-  ios:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '8.0.x'
-
-      - name: Cache NuGet packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.nuget/packages
-          key: nuget-ios-${{ hashFiles('**/*.csproj') }}
-          restore-keys: |
-            nuget-ios-
-
-      - name: Install MAUI iOS workload
-        run: |
-          dotnet workload install maui-ios
-          dotnet workload restore
-
-      - name: Restore solution
-        run: dotnet restore OOSDD_GroceryApp_Sprint3_Studenten.sln
-
-      - name: Build iOS projects
-        run: |
-          dotnet build ./Grocery.App/Grocery.App.csproj -f net8.0-ios --configuration Release --no-restore
-          dotnet build ./Grocery.Core/Grocery.Core.csproj -f net8.0-ios --configuration Release --no-restore
-          dotnet build ./Grocery.Core.Data/Grocery.Core.Data.csproj -f net8.0-ios --configuration Release --no-restore
-
-      - name: Run iOS unit tests
-        run: |
-          dotnet test ./Grocery.App/Grocery.App.csproj -f net8.0-ios --configuration Release --no-restore --no-build
-          dotnet test ./Grocery.Core/Grocery.Core.csproj -f net8.0-ios --configuration Release --no-restore --no-build
-          dotnet test ./Grocery.Core.Data/Grocery.Core.Data.csproj -f net8.0-ios --configuration Release --no-restore --no-build
-
-  # Mac Catalyst build en tests
-  maccatalyst:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '8.0.x'
-
-      - name: Cache NuGet packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.nuget/packages
-          key: nuget-maccatalyst-${{ hashFiles('**/*.csproj') }}
-          restore-keys: |
-            nuget-maccatalyst-
-
-      - name: Install MAUI iOS/Mac Catalyst workloads
-        run: |
-          dotnet workload install maui-ios
-          dotnet workload install maui-maccatalyst
-          dotnet workload restore
-
-      - name: Restore solution
-        run: dotnet restore OOSDD_GroceryApp_Sprint3_Studenten.sln
-
-      - name: Build Mac Catalyst projects
-        run: |
-          dotnet build ./Grocery.App/Grocery.App.csproj -f net8.0-maccatalyst --configuration Release --no-restore /p:RuntimeIdentifier=maccatalyst-x64
-          dotnet build ./Grocery.Core/Grocery.Core.csproj -f net8.0-maccatalyst --configuration Release --no-restore /p:RuntimeIdentifier=maccatalyst-x64
-          dotnet build ./Grocery.Core.Data/Grocery.Core.Data.csproj -f net8.0-maccatalyst --configuration Release --no-restore /p:RuntimeIdentifier=maccatalyst-x64
-
-      - name: Run Mac Catalyst unit tests
-        run: |
-          dotnet test ./Grocery.App/Grocery.App.csproj -f net8.0-maccatalyst --configuration Release --no-restore --no-build /p:RuntimeIdentifier=maccatalyst-x64
-          dotnet test ./Grocery.Core/Grocery.Core.csproj -f net8.0-maccatalyst --configuration Release --no-restore --no-build /p:RuntimeIdentifier=maccatalyst-x64
-          dotnet test ./Grocery.Core.Data/Grocery.Core.Data.csproj -f net8.0-maccatalyst --configuration Release --no-restore --no-build /p:RuntimeIdentifier=maccatalyst-x64
+          dotnet-version: '8.0.x'  # Gebruik de juiste versie voor MAUI
+ 
+      - name: Installeer MAUI workloads
+        run: dotnet workload install maui-android
+ 
+      - name: Herstel afhankelijkheden
+        run: dotnet restore
+ 
+      - name: Bouw de applicatie
+        run: dotnet build --configuration Release --no-restore
+ 
+      - name: Voer unit tests uit
+        run: dotnet test --configuration Release --no-restore --no-build --verbosity normal
