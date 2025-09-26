@@ -1,11 +1,6 @@
 ﻿using Grocery.Core.Interfaces.Repositories;
 using Grocery.Core.Interfaces.Services;
 using Grocery.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Grocery.Core.Services
 {
@@ -31,6 +26,16 @@ namespace Grocery.Core.Services
         {
             List<Client> clients = _clientRepository.GetAll();
             return clients;
+        }
+
+        public void Add(Client client)
+        {
+            var clientList = _clientRepository.GetAll();
+            var newId = clientList.Count != 0 ? clientList.Max(c => c.Id) + 1 : 1;
+            client.Id = newId;
+
+            clientList.Add(client);
+            _clientRepository.Add(client);
         }
     }
 }
