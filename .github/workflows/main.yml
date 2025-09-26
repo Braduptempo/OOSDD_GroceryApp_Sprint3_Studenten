@@ -8,6 +8,7 @@ on:
   pull_request:
     branches:
       - main
+      - develop
 
 jobs:
   # Windows build en tests
@@ -36,15 +37,15 @@ jobs:
           dotnet workload restore
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore -f net8.0-windows /p:RuntimeIdentifier=win-x64
 
       - name: Build Windows project
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build -f net8.0-windows --configuration Release --no-restore /p:RuntimeIdentifier=win-x64
 
       - name: Run unit tests
-        run: dotnet test --configuration Release --no-restore --no-build --verbosity normal
+        run: dotnet test -f net8.0-windows --configuration Release --no-restore --no-build /p:RuntimeIdentifier=win-x64
 
-  # Android build en tests (Linux runner)
+  # Android build en tests
   android:
     runs-on: ubuntu-latest
     steps:
@@ -60,9 +61,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.nuget/packages
-          key: nuget-${{ hashFiles('**/*.csproj') }}
+          key: nuget-android-${{ hashFiles('**/*.csproj') }}
           restore-keys: |
-            nuget-
+            nuget-android-
 
       - name: Install MAUI Android workload
         run: |
@@ -70,15 +71,15 @@ jobs:
           dotnet workload restore
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore -f net8.0-android
 
       - name: Build Android project
         run: dotnet build -f net8.0-android --configuration Release --no-restore
 
       - name: Run unit tests
-        run: dotnet test -f net8.0-android --configuration Release --no-restore --no-build --verbosity normal
-  
-  # iOS build en tests (macOS runner)
+        run: dotnet test -f net8.0-android --configuration Release --no-restore --no-build
+
+  # iOS build en tests
   ios:
     runs-on: macos-latest
     steps:
@@ -104,10 +105,45 @@ jobs:
           dotnet workload restore
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore -f net8.0-ios
 
       - name: Build iOS project
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build -f net8.0-ios --configuration Release --no-restore
 
       - name: Run unit tests
-        run: dotnet test --configuration Release --no-restore --no-build --verbosity normal
+        run: dotnet test -f net8.0-ios --configuration Release --no-restore --no-build
+
+  # Mac Catalyst build en tests
+  maccatalyst:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: nuget-maccatalyst-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            nuget-maccatalyst-
+
+      - name: Install MAUI iOS/Mac Catalyst workloads
+        run: |
+          dotnet workload install maui-ios
+          dotnet workload install maui-maccatalyst
+          dotnet workload restore
+
+      - name: Restore dependencies
+        run: dotnet restore -f net8.0-maccatalyst /p:RuntimeIdentifier=maccatalyst-x64
+
+      - name: Build Mac Catalyst project
+        run: dotnet build -f net8.0-maccatalyst --configuration Release --no-restore /p:RuntimeIdentifier=maccatalyst-x64
+
+      - name: Run unit tests
+        run: dotnet test -f net8.0-maccatalyst --configuration Release --no-restore --no-build /p:RuntimeIdentifier=maccatalyst-x64
